@@ -25,28 +25,30 @@
 ;; query1 allows a very specific format of request.
 
 (defun query2 (body)
+  "This allows the execution of arbitrary Cypher statements, so body must be a properly formatted Cypher query."
   (decode-neo4j-json-output 
    (drakma:http-request *neo-trans* 
 			:method :post 
 			:accept *acc-format* 
 			:content-type *json* 
 			:content (format nil "{\"statements\" : [ {\"statement\" : \"~a\"} ]}" body))))  
-;; query2 allows arbitrary execution of Cypher statements from lisp. I call that a win.
 
-(defun get-playlist (title)
+
+(defun get-playlist-by-title (title)
   (query2 (format nil "match (s:Song)-[:IN]->(p:Playlist {title:'~:(~a~)'}) return s.name, s.mp3;" title)))
 
-;; Each of the "query" defuns has the exact same stuff from decode... to "statement" so I'm sure there's some way to abstract that.
-;;--------------------------------------------;;                                      ;; STUFF I WANT TO SEE:
-
 (defun get-playlist-by-owner (owner)
-  (query2 (format nil "match (s:Song)-[:IN]->(p:Playlist {owner:'~:(~a~)'}) return s.name, s.mp3;" owner))) ;; Since the Playlists don't have Owners yet this one hasn't been tested.
+  "Since the Playlists don't have Owners yet this one hasn't been tested."
+  (query2 (format nil "match (s:Song)-[:IN]->(p:Playlist {owner:'~:(~a~)'}) return s.name, s.mp3;" owner)))
 
 (defun get-song-by-title (title)
-  (...))
+  (query2 (format nil "MATCH (s:Song) WHERE s.name='~:(~a~)' return s.mp3, s.oga;" title)))
 
 (defun get-song-by-title-artist (title artist)
-  (...))
+  "Be careful with this one as it assumes Noun Case for both artist and title."
+  (query2 (format nil "MATCH (s:Song {name:'~:(~a~)', artist:'~:(~a~)'}) return s.mp3, s.oga;" title artist)))
+
+;;--------------------------------------------;;                                      ;; STUFF I WANT TO SEE:
 
 
 (defun write-playlist (lst)
