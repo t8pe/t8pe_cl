@@ -34,3 +34,26 @@
 ;; (cdr (second (second (second resp)))) gives a list of just the response rows
 
 (setf rows (cdr (second (second (second resp)))))
+
+;;-------------This is what I want:---------------;;
+
+(defmacro extract-to-jplayer-json (resp)
+  (...))
+-> json in jplayer format.
+
+;; Some futzing: ;;
+(setf rose (extract-data-rows (get-playlist-by-title "Anu Playlist")))
+
+(destructuring-bind (a b c d e f) (car (second rose))
+	   (list :title b :artist c :mp3 d :oga e))
+-> (:TITLE "Tangerine Bream" :ARTIST "Ben" :MP3 "TB.mp3" :OGA "TB.ogg")
+
+(destructuring-bind (a b c d e f) (car (second rose))
+	   (list "title" b "artist" c "mp3" d "oga" e))
+
+;; This may be the place where a macro is necessary. 
+;; Or it might make a lot of sense to set it up as a CLOS object.
+
+;; So this does it with a destructuring-bind, for a single row; it's ugly as shit and has warnings aplenty, but there you go.
+(destructuring-bind (a b c d e f) (car (second rose))
+(format nil "[\"title\" : \"~a\" \"artist\" : \"~a\" \"mp3\" : \"~a\" \"oga\" : \"~a\"]" b c d e))
