@@ -18,8 +18,11 @@
 ((:COMMIT . "http://localhost:7474/db/data/transaction/29/commit")
  (:RESULTS
   ((:COLUMNS "s.name" "s.mp3")
-   (:DATA ((:ROW "The La Song" "la.mp3")) ((:ROW "Tangerine Bream" "TB.mp3"))
-    ((:ROW "Fairytale" "Fairytale.mp3")) ((:ROW "Medusa" "Medusa.mp3"))
+   (:DATA 
+    ((:ROW "The La Song" "la.mp3")) 
+    ((:ROW "Tangerine Bream" "TB.mp3"))
+    ((:ROW "Fairytale" "Fairytale.mp3")) 
+    ((:ROW "Medusa" "Medusa.mp3"))
     ((:ROW "Sir Gawain And The Green Knight" "GGK.mp3")))))
  (:TRANSACTION (:EXPIRES . "Sat, 07 Feb 2015 22:35:57 +0000")) (:ERRORS))
 
@@ -41,6 +44,24 @@
   (...))
 -> json in jplayer format.
 
+;; Or:
+(while rows (resp) ;; resp from get-playlist- etc
+       (transform-row-to-json row))
+
+;; test condition: (eq (car row) (:TRANSACTION)) - WHICH ACTUALLY WORKS!
+
+;; So I can recursively call transform-row-to-json and have it push onto a list of some type.
+
+(defun extract-to-jplayer-json (resp)
+  (let ((json-for-jplayer '()))
+  (if (not (eq (car resp) '(:TRANSACTION)))
+	   (push (destructuring-bind (a b c d e f) (caar resp)
+		   (format t "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer)
+	   json-for-jplayer)))
+;; Oh if this actually worked on rose, I'd exceed recursion. Doh.
+
+;; Not working yet. Sadly.
+
 ;; Some futzing: ;;
 (setf rose (extract-data-rows (get-playlist-by-title "Anu Playlist")))
 
@@ -54,6 +75,9 @@
 ;; This may be the place where a macro is necessary. 
 ;; Or it might make a lot of sense to set it up as a CLOS object.
 
-;; So this does it with a destructuring-bind, for a single row; it's ugly as shit and has warnings aplenty, but there you go.
+;; So this does it with a destructuring-bind, for a single row; it's ugly as shit and has warnings aplenty, but there you go.?/
 (destructuring-bind (a b c d e f) (car (second rose))
-(format nil "[\"title\" : \"~a\" \"artist\" : \"~a\" \"mp3\" : \"~a\" \"oga\" : \"~a\"]" b c d e))
+(format t "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e))
+;; And now that it's format t rather than format nil, it outputs perfectly. I think.
+;; So this works on (car (second rose)) - 
+
