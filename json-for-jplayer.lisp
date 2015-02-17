@@ -1,6 +1,18 @@
 (defun extract-data-rows (resp)
   (cdr (second (second (second resp)))))
 
+(defun extract-to-jplayer-json (resp)
+  (let ((json-for-jplayer '()))
+    (progn
+      (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
+      (push (destructuring-bind (a b c d e f) (car x)
+      		   (format t "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) resp))
+      json-for-jplayer))
+
+;; Thank you, this seems to work fine. Not sure whether I should use format t or format nil, but it's working. It only works on stuff sanitized like (setf rose (extract-data-rows (get-playlist-by-title "Anu Playlist"))) though. That's the next step I guess.
+
+
+
 
 ;;----- This is what the final format has to be: ---------;;
 {
@@ -54,13 +66,14 @@
 
 (defun extract-to-jplayer-json (resp)
   (let ((json-for-jplayer '()))
+;; need to get past the opening rows first
   (if (not (eq (car resp) '(:TRANSACTION)))
 	   (push (destructuring-bind (a b c d e f) (caar resp)
-		   (format t "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer)
-	   json-for-jplayer)))
+		   (format nil "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer)
+	   json-for-jplayer (cdr resp)))) ;; need to properly select the next bit of the resp
 ;; Oh if this actually worked on rose, I'd exceed recursion. Doh.
+;; Changed from t to nil in the format and at least it put *something* in the output. Which is a start.
 
-;; Not working yet. Sadly.
 
 ;; Some futzing: ;;
 (setf rose (extract-data-rows (get-playlist-by-title "Anu Playlist")))
@@ -81,3 +94,11 @@
 ;; And now that it's format t rather than format nil, it outputs perfectly. I think.
 ;; So this works on (car (second rose)) - 
 
+(defun extract-to-jplayer-json-x (resp) ;; trying to get the right data in
+  (let ((json-for-jplayer '())
+	(useful-response (extract-data-rows (get-playlist-by-title (resp))))
+    (progn
+      (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
+      (push (destructuring-bind (a b c d e f) (car x))
+		   (format t "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) useful-response)
+      json-for-jplayer)))
