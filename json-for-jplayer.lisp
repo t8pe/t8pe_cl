@@ -6,13 +6,19 @@
     (progn
       (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
       (push (destructuring-bind (a b c d e f) (car x)
-      		   (format t "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) resp))
+      		   (format nil "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) resp))
       json-for-jplayer))
 
-;; Thank you, this seems to work fine. Not sure whether I should use format t or format nil, but it's working. It only works on stuff sanitized like (setf rose (extract-data-rows (get-playlist-by-title "Anu Playlist"))) though. That's the next step I guess.
+;; Thank you, this seems to work fine. Not sure whether I should use format t or format nil, but it's working. 
 
-
-
+(defun extract-to-jplayer-json-from-title (title) ;; trying to get the right data in
+  (let ((json-for-jplayer '())
+	(useful-data (extract-data-rows (get-playlist-by-title title)) ))
+    (progn
+      (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
+      (push (destructuring-bind (a b c d e f) (car x)
+		   (format t "{\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\", \"poster\":\"\"}," b c d e)) json-for-jplayer))) useful-data))
+      json-for-jplayer))
 
 ;;----- This is what the final format has to be: ---------;;
 {
@@ -94,11 +100,21 @@
 ;; And now that it's format t rather than format nil, it outputs perfectly. I think.
 ;; So this works on (car (second rose)) - 
 
-(defun extract-to-jplayer-json-x (resp) ;; trying to get the right data in
-  (let ((json-for-jplayer '())
-	(useful-response (extract-data-rows (get-playlist-by-title (resp))))
+
+
+
+(defun extract-to-jplayer-json-from-title (title) ;; trying to get the right data in
+  (let ((json-for-jplayer '()))
     (progn
       (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
-      (push (destructuring-bind (a b c d e f) (car x))
-		   (format t "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) useful-response)
-      json-for-jplayer)))
+      (push (destructuring-bind (a b c d e f) (car x)
+		   (format t "{\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\", \"poster\":\"\"}," b c d e)) json-for-jplayer))) (extract-data-rows (get-playlist-by-title title))))
+      json-for-jplayer))
+
+(defun extract-to-jplayer-json (resp)
+  (let ((json-for-jplayer '()))
+    (progn
+      (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
+      (push (destructuring-bind (a b c d e f) (car x)
+      		   (format nil "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) resp))
+      json-for-jplayer))
