@@ -4,21 +4,23 @@
 (defun extract-to-jplayer-json (resp)
   (let ((json-for-jplayer '()))
     (progn
-      (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
+      (mapcar (lambda (x) (unless (eq (car x) '(:TRANSACTION))
       (push (destructuring-bind (a b c d e f) (car x)
       		   (format nil "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) resp))
       json-for-jplayer))
 
-;; Thank you, this seems to work fine. Not sure whether I should use format t or format nil, but it's working. 
-
-(defun extract-to-jplayer-json-from-title (title) ;; trying to get the right data in
+(defun extract-to-jplayer-json-from-title (title)
   (let ((json-for-jplayer '())
 	(useful-data (extract-data-rows (get-playlist-by-title title)) ))
     (progn
-      (mapcar (lambda (x) (if (not (eq (car x) '(:TRANSACTION)))
+      (mapcar (lambda (x) (unless (eq (car x) '(:TRANSACTION))
       (push (destructuring-bind (a b c d e f) (car x)
 		   (format t "{\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\", \"poster\":\"\"}," b c d e)) json-for-jplayer))) useful-data))
       json-for-jplayer))
+
+
+;;;;;;;;;;;;; Down here is where all the early work is: ;;;;;;;;;;;;;;
+
 
 ;;----- This is what the final format has to be: ---------;;
 {
@@ -118,3 +120,4 @@
       (push (destructuring-bind (a b c d e f) (car x)
       		   (format nil "[\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\"]" b c d e)) json-for-jplayer))) resp))
       json-for-jplayer))
+

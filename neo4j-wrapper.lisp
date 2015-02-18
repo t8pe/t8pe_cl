@@ -49,7 +49,7 @@
   (query2 (format nil "MATCH (s:Song {name:'~:(~a~)', artist:'~:(~a~)'}) return s.name, s.artist, s.mp3, s.oga, s.poster;" title artist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;; STUFF I WANT TO SEE: ;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun write-playlist (lst)
   (...))
