@@ -47,27 +47,3 @@
 (defun get-song-by-title-artist (title artist)
   "Be careful with this one as it assumes Noun Case for both artist and title."
   (query2 (format nil "MATCH (s:Song {name:'~:(~a~)', artist:'~:(~a~)'}) return s.name, s.artist, s.mp3, s.oga, s.poster;" title artist)))
-
-;;;;;;;;;;;;;;;;;;;;;;;; STUFF I WANT TO SEE: ;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun write-playlist (lst)
-  (...))
-
-(defun delete-playlist (lst)
-  (...))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;; working on: ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun query3 (body)
-  "This allows the execution of arbitrary Cypher statements, so body must be a properly formatted Cypher query."
-  (babel:octets-to-string 
-   (drakma:http-request *neo-trans* 
-			:method :post 
-			:accept *acc-format* 
-			:content-type *json* 
-			:content (format nil "{\"statements\" : [ {\"statement\" : \"~a\"} ]}" body)))) 
-
-(defun get-playlist-by-title-1 (title)
-  (query3 (format nil "match (s:Song)-[:IN]->(p:Playlist {title:'~:(~a~)'}) return s.name, s.artist, s.mp3, s.oga, s.poster;" title)))
-;; Interesting. The output between these two is different - it's actually pure JSON for the latter one, at least in terms of its brackets etc. But it's not correctly formatted JSON, so I'm not sure it's that helpful!
