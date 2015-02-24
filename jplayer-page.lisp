@@ -28,9 +28,6 @@
 			:class "logo")
 		  (:span :class "strapline"
 			 "Listen to amazing streaming music here!"))
-;	    (:div :id "player"
-;	    ,(when song
-;		   `(extract-to-jplayer-json-from-title-n ,song))) ; Ok that didn't work either.
 	    ,@body)))) 
 
 
@@ -94,41 +91,38 @@
                               audioFullScreen: true // Allows the audio poster to go full screen via keyboard
 	                      }); // end Playlist part
                               });")))
-	    (:div :class "entry-content"
-	     (:div :id "jp_container_N"
-	      (:div :id "jp_container_N" 
-		    :class "jp-video jp-video-270p"
-	       (:div :class "jp-type-playlist"
-		(:div :id "jquery_jplayer_N"
-		      :class "jp-jplayer")
-		(:div :class "jp-video-play"
-                 (:a :href "javascript:;"
-		     :class "jp-video-play-icon"
-		     :tabindex "1" 
-		     (str "play")))
-		(:div :class "jp-interface"
-		 (:div :class "jp-progress"
-		  (:div :class "jp-seek-bar"
-		   (:div :class "jp-play-bar")))
-		 (:div :class "jp-current-time")
-		 (:div :class "jp-duration")
-		 (:div :class "jp-details"
-		  (:ul 
-		   (:li 
-		    (:span :class "jp-title"))))
-		 (:div :class "jp-controls-holder"
-		  (:ul :class "jp-controls"
-		       (loop for (class) in '(("previous") ("play") ("pause") ("next") ("stop") ("mute") ("unmute") ("volume-max")) 
-			  do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" (str class))))))
-		  (:div :class "jp-volume-bar"
-			(:div :class "jp-volume-bar-value"))
-		  (:ul :class "jp-toggles"
-		       (loop for (class) in '(("full-screen") ("restore-screen") ("shuffle") ("shuffle-off") ("repeat") ("repeat-off"))
-			  do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" (str class)))))) ; leaving out :title as there's a CL-WHO problem with it
+(:div :id "jp_container_N" :class "jp-video jp-video-270p" :role "application"
+      (:div :class "jp-type-playlist"
+	    (:div :id "jquery_jplayer_N" :class "jp-jplayer")
+	    (:div :class "jp-gui"
+		  (:div :class "jp-video-play"
+			(:button :class "jp-vide-play-icon" :role "button" :tabindex "0" "play"))
+		  (:div :class "jp-interface"
+			(:div :class "jp-progress"
+			      (:div :class "jp-seek-bar"
+				    (:div :class "jp-play-bar")))
+			(:div :class "jp-current-time" :role "timer" "&nbsp;")
+			(:div :class "jp-duration" :role "timer" "&nbsp;")
+			(:div :class "jp-details"
+			      (:div :class "jp-title" "&nbsp;"))
+			(:div :class "jp-controls-holder"
+			      (:div :class "jp-volume-controls"
+				    (:button :class "jp-mute" :role "button" :tabindex "0" "mute")
+				    (:button :class "jp-volume-max" :role "button" :tabindex "0" "max volume")
+				    (:div :class "jp-volume-bar"
+					  (:div :class "jp-volume-bar-value")))
+			      (:div :class "jp-controls"
+				    (:button :class "jp-previous" :role "button" :tabindex "0" "previous")
+				    (:button :class "jp-play" :role "button" :tabindex "0" "play")
+				    (:button :class "jp-stop" :role "button" :tabindex "0" "stop")
+				    (:button :class "jp-next" :role "button" :tabindex "0" "next"))
+			      (:div :class "jp-toggles"
+				    (:button :class "jp-repeat" :role "button" :tabindex "0" "repeat")
+				    (:button :class "jp-shuffle" :role "button" :tabindex "0" "shuffle")
+				    (:button :class "jp-full-screen" :role "button" :tabindex "0" "full screen"))))
 		  (:div :class "jp-playlist"
 			(:ul (:li)))
 		  (:div :class "jp-no-solution"
-			(:span "Update required"))))))
-	      (:p :style "margin-top:1em;"))))
-	   ,@body)))
+			(:span "Update Required")))))
 
+,@body))))

@@ -220,3 +220,48 @@ audioFullScreen: true // Allows the audio poster to go full screen via keyboard
 (defun get-playlist-by-title-1 (title)
   (query3 (format nil "match (s:Song)-[:IN]->(p:Playlist {title:'~:(~a~)'}) return s.name, s.artist, s.mp3, s.oga, s.poster;" title)))
 ;; Interesting. The output between these two is different - it's actually pure JSON for the latter one, at least in terms of its brackets etc. But it's not correctly formatted JSON, so I'm not sure it's that helpful!
+
+
+;;;;;;;;;;;;;;;;;;;;;;; From jplayer-page.lisp ;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;; This stuff is deprecated: ;;;;;;;;;;;;;;;;;;;;;;
+
+
+	    (:div :class "entry-content"
+	     (:div :id "jp_container_N"
+	      (:div :id "jp_container_N" 
+		    :class "jp-video jp-video-270p"
+	       (:div :class "jp-type-playlist"
+		(:div :id "jquery_jplayer_N"
+		      :class "jp-jplayer")
+		(:div :class "jp-video-play"
+                 (:a :href "javascript:;"
+		     :class "jp-video-play-icon"
+		     :tabindex "1" 
+		     (str "play")))
+		(:div :class "jp-interface"
+		 (:div :class "jp-progress"
+		  (:div :class "jp-seek-bar"
+		   (:div :class "jp-play-bar")))
+		 (:div :class "jp-current-time")
+		 (:div :class "jp-duration")
+		 (:div :class "jp-details"
+		  (:ul 
+		   (:li 
+		    (:span :class "jp-title"))))
+		 (:div :class "jp-controls-holder"
+		  (:ul :class "jp-controls"
+		       (loop for (class) in '(("previous") ("play") ("pause") ("next") ("stop") ("mute") ("unmute") ("volume-max")) 
+			  do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" (str class))))))
+		  (:div :class "jp-volume-bar"
+			(:div :class "jp-volume-bar-value"))
+		  (:ul :class "jp-toggles"
+		       (loop for (class) in '(("full-screen") ("restore-screen") ("shuffle") ("shuffle-off") ("repeat") ("repeat-off"))
+			  do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" (str class)))))) ; leaving out :title as there's a CL-WHO problem with it
+		  (:div :class "jp-playlist"
+			(:ul (:li)))
+		  (:div :class "jp-no-solution"
+			(:span "Update required"))))))
+	      (:p :style "margin-top:1em;"))))
+	   ,@body)))
+
