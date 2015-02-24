@@ -1,3 +1,87 @@
+;;;;;;;;;;;;;;;;; Early work from jplayer-page.lisp ;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;; scratch work ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; These are just to test how the macros pass values ;;;;;;;;;;
+(define-easy-handler (teste :uri "/testi") (playlist)
+  (default-page3 (:playlist playlist)
+		 (:p (str playlist))))
+
+(defmacro default-page3 ((&key playlist) &body body)
+  `(with-html-output-to-string
+       (*standard-ouput* nil :prologue t :indent t) 
+     (:html :lang "en"
+           (:head
+	    (:meta :charset "utf-8")
+	    (:title ,playlist))
+	   (:body
+	    
+	    (:script :type "text/javascript" 
+		     (progn (str "jQuery(document).ready(function($) {
+                                  var myPlaylist = new jPlayerPlaylist({
+	                          jPlayer: \"#jquery_jplayer_N\",
+	                          cssSelectorAncestor: \"#jp_container_N\"},")
+			    
+			    (str (extract-to-jplayer-json-from-title-n ,playlist) ; This bit I'm not sure about at all.
+))
+			    (str 
+			     "{ playlistOptions: {
+	                      enableRemoveControls: true
+	                      },
+                	      swfPath: \"/js/\",
+	                      solution: \"html,flash\",
+	                      supplied: \"oga,mp3\",
+	                      smoothPlayBar: true,
+	                      keyEnabled: true,
+                              audioFullScreen: true // Allows the audio poster to go full screen via keyboard
+	                      }); // end Playlist part
+                              });"))
+	    ,@body))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   
+
+; So. It looks like I've got to re-eval BOTH THE FUCKING FUNCTIONS when testing changes. And the :title thing was being a bitch. Let's see if we can work it back in.
+
+(with-html-output-to-string (*standard-ouput* nil :prologue t :indent t)
+
+(loop for (class) in '(("full-screen") ("restore-screen") ("shuffle") ("shuffle-off") ("repeat") ("repeat-off"))
+do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" :title (str class)))))) ; why the hell is there an extra title?
+
+
+
+jQuery(document).ready(function($) {
+
+
+var myPlaylist = new jPlayerPlaylist({
+				     jPlayer: \"#jquery_jplayer_N\",
+				     cssSelectorAncestor: \"#jp_container_N\"},
+
+				     (extract-to-jplayer-json-from-title-t "Anu Playlist") ; This bit I'm not sure about at all.
+			    { 
+playlistOptions: 
+{
+enableRemoveControls: true
+},
+swfPath: \"/js/\",
+solution: \"html,flash\",
+supplied: \"oga,mp3\",
+smoothPlayBar: true,
+keyEnabled: true,
+audioFullScreen: true // Allows the audio poster to go full screen via keyboard
+}); // end Playlist part
+});")))
+
+(ps ((@ ($ document) ready
+
+(defmacro square-brackets (body)
+  `(substitute #\[ #\( (substitute #\] #\) ,body))) ; A noble effort. But I need a string replacement.
+
+(defmacro square-brackets2 (body)
+  "For each item in the body list, add it to the output string, slap square brackets on it, return it"
+  `(concatenate 'string "[" (mapcar #'princ ,body) "]"))
+
+(mapcar #'princ (extract-to-jplayer-json-from-title-n "Anu Playlist"))
+
+ ;And there we have it.
+
 
 ;;;;;;;;;;;;;;; Early work from json-for-jplayer.lisp ;;;;;;;;;;;;;;;;
 

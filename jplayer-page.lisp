@@ -47,44 +47,10 @@
                   (:h1 (str name))
 		  (:p (str (extract-to-jplayer-json-from-title-n name))))) ; OKAAAAAAY. So I needed to put str in there.
 
-;;;;;;;;; These are just to test how the macros pass values ;;;;;;;;;;
-(define-easy-handler (teste :uri "/testi") (playlist)
-  (default-page3 (:playlist playlist)
-		 (:p (str playlist))))
 
-(defmacro default-page3 ((&key playlist) &body body)
-  `(with-html-output-to-string
-       (*standard-ouput* nil :prologue t :indent t) 
-     (:html :lang "en"
-           (:head
-	    (:meta :charset "utf-8")
-	    (:title ,playlist))
-	   (:body
-	    
-	    (:script :type "text/javascript" 
-		     (progn (str "jQuery(document).ready(function($) {
-                                  var myPlaylist = new jPlayerPlaylist({
-	                          jPlayer: \"#jquery_jplayer_N\",
-	                          cssSelectorAncestor: \"#jp_container_N\"},")
-			    
-			    (str (extract-to-jplayer-json-from-title-n ,playlist) ; This bit I'm not sure about at all.
-))
-			    (str 
-			     "{ playlistOptions: {
-	                      enableRemoveControls: true
-	                      },
-                	      swfPath: \"/js/\",
-	                      solution: \"html,flash\",
-	                      supplied: \"oga,mp3\",
-	                      smoothPlayBar: true,
-	                      keyEnabled: true,
-                              audioFullScreen: true // Allows the audio poster to go full screen via keyboard
-	                      }); // end Playlist part
-                              });"))
-	    ,@body))))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+(defmacro sq-br-json (&rest stuff)
+  "For setting up JSON arrays for the jPlayer format"
+  `(remove #\( (remove #\) (format nil "[~a]," ,@stuff))))
 
 (define-easy-handler (test-that :uri "/test-that") (playlist)
   (default-page2 (:playlist playlist)
@@ -106,17 +72,16 @@
 				"http://jplayer.org/css/jPlayer.css") ; not referencing the sprites
 		 do (htm
 		     (:link :href link :rel "stylesheet" :type "text/css")))
-		    ; (:script :type type :src link :rel "stylesheet"))) ; this generates the CSS links
-	  (:title ,playlist)) ; let's see if it works with the comma
+	  (:title (str playlist))) 
 	   (:body
 	    (:script :type "text/javascript" 
-		     (progn (str "jQuery(document).ready(function($) {
+		     (progn (str "$(document).ready(function() {
                                   var myPlaylist = new jPlayerPlaylist({
 	                          jPlayer: \"#jquery_jplayer_N\",
 	                          cssSelectorAncestor: \"#jp_container_N\"},")
-			    (str
-			    (extract-to-jplayer-json-from-title-n ,playlist)) ; This bit I'm not sure about at all.
-			   ; (str "[{\"title\":\"Sir Gawain And The Green Knight\", \"artist\":\"Heather\", \"mp3\":\"GGK.mp3\", \"oga\":\"GGK.ogg\", \"poster\":\"\"},]")			    
+			    (str 
+			     (sq-br-json
+			      (extract-to-jplayer-json-from-title-n ,playlist))) 
 			    (str 
 			     "{ playlistOptions: {
 	                      enableRemoveControls: true
@@ -153,50 +118,17 @@
 		    (:span :class "jp-title"))))
 		 (:div :class "jp-controls-holder"
 		  (:ul :class "jp-controls"
-		       (loop for (class) in '(("previous") ("play") ("pause") ("next") ("stop") ("mute") ("unmute") ("volume-max")) ; christ this is hideous
+		       (loop for (class) in '(("previous") ("play") ("pause") ("next") ("stop") ("mute") ("unmute") ("volume-max")) 
 			  do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" (str class))))))
 		  (:div :class "jp-volume-bar"
-		   (:div :class "jp-volume-bar-value"))
+			(:div :class "jp-volume-bar-value"))
 		  (:ul :class "jp-toggles"
 		       (loop for (class) in '(("full-screen") ("restore-screen") ("shuffle") ("shuffle-off") ("repeat") ("repeat-off"))
-			    do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" (str class)))))) ; leaving out :title as there's a CL-WHO problem with it
+			  do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" (str class)))))) ; leaving out :title as there's a CL-WHO problem with it
 		  (:div :class "jp-playlist"
-		   (:ul (:li)))
+			(:ul (:li)))
 		  (:div :class "jp-no-solution"
-		   (:span "Update required"))))))
+			(:span "Update required"))))))
 	      (:p :style "margin-top:1em;"))))
-,@body)))
-		   
+	   ,@body)))
 
-; So. It looks like I've got to re-eval BOTH THE FUCKING FUNCTIONS when testing changes. And the :title thing was being a bitch. Let's see if we can work it back in.
-
-(with-html-output-to-string (*standard-ouput* nil :prologue t :indent t)
-
-(loop for (class) in '(("full-screen") ("restore-screen") ("shuffle") ("shuffle-off") ("repeat") ("repeat-off"))
-do (htm (:li (:a :href "javascript:;" :class (concatenate 'string "jp-" class) :tabindex "1" :title (str class)))))) ; why the hell is there an extra title?
-
-
-
-jQuery(document).ready(function($) {
-
-
-var myPlaylist = new jPlayerPlaylist({
-				     jPlayer: \"#jquery_jplayer_N\",
-				     cssSelectorAncestor: \"#jp_container_N\"},
-
-				     (extract-to-jplayer-json-from-title-t "Anu Playlist") ; This bit I'm not sure about at all.
-			    { 
-playlistOptions: 
-{
-enableRemoveControls: true
-},
-swfPath: \"/js/\",
-solution: \"html,flash\",
-supplied: \"oga,mp3\",
-smoothPlayBar: true,
-keyEnabled: true,
-audioFullScreen: true // Allows the audio poster to go full screen via keyboard
-}); // end Playlist part
-});")))
-
-(ps ((@ ($ document) ready

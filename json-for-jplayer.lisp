@@ -29,3 +29,4 @@
       (push (destructuring-bind (a b c d e f) (first x)
 		   (format t "{\"title\":\"~a\", \"artist\":\"~a\", \"mp3\":\"~a\", \"oga\":\"~a\", \"poster\":\"\"}," b c d e)) json-for-jplayer))) useful-data))
       json-for-jplayer))
+
