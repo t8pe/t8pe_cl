@@ -45,9 +45,7 @@
 		  (:p (str (extract-to-jplayer-json-from-title-n name))))) ; OKAAAAAAY. So I needed to put str in there.
 
 
-(defmacro sq-br-json (&rest stuff)
-  "For setting up JSON arrays for the jPlayer format"
-  `(remove #\( (remove #\) (format nil "[~a]," ,@stuff))))
+
 
 (define-easy-handler (test-that :uri "/test-that") (playlist)
   (default-page2 (:playlist playlist)
@@ -76,21 +74,16 @@
                                   var myPlaylist = new jPlayerPlaylist({
 	                          jPlayer: \"#jquery_jplayer_N\",
 	                          cssSelectorAncestor: \"#jp_container_N\"},")
-			    (str 
-			     (sq-br-json
-			      (extract-to-jplayer-json-from-title-n ,playlist))) 
-			    (str 
-			     "{ playlistOptions: {
-	                      enableRemoveControls: true
-	                      },
+			    (str (playlist-to-json ,playlist))
+			    (str "{ 
+                              playlistOptions: { enableRemoveControls: true },
                 	      swfPath: \"/js/\",
 	                      solution: \"html,flash\",
 	                      supplied: \"oga,mp3\",
 	                      smoothPlayBar: true,
 	                      keyEnabled: true,
-                              audioFullScreen: true // Allows the audio poster to go full screen via keyboard
-	                      }); // end Playlist part
-                              });")))
+                              audioFullScreen: true 
+	                      }); });")))
 (:div :id "jp_container_N" :class "jp-video jp-video-270p" :role "application"
       (:div :class "jp-type-playlist"
 	    (:div :id "jquery_jplayer_N" :class "jp-jplayer")

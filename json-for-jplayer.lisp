@@ -1,6 +1,15 @@
 (defun extract-data-rows (resp)
   (cdr (second (second (second resp)))))
 
+(defmacro sq-br-json (&rest stuff)
+  "For setting up JSON arrays for the jPlayer format"
+  `(remove #\( (remove #\) (format nil "[~a]," ,@stuff))))
+
+(defun playlist-to-json (title)
+  (sq-br-json 
+   (extract-to-jplayer-json-from-title-n title)))
+
+
 (defun extract-to-jplayer-json (resp)
   "Takes a sanitised version of the input, ie only the data rows"
   (let ((json-for-jplayer '()))
