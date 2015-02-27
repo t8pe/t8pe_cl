@@ -166,6 +166,14 @@ audioFullScreen: true // Allows the audio poster to go full screen via keyboard
 ;; So this works on (car (second rose)) - 
 
 
+(defun query1 (type prop term ret)
+  (decode-neo4j-json-output 
+   (drakma:http-request *neo-trans* 
+			:method :post 
+			:accept *acc-format* 
+			:content-type *json* 
+			:content (format nil "{\"statements\" : [ {\"statement\" : \"MATCH (s:~@(~a~)) WHERE s.~(~:a~)='~@(~a~)' RETURN s.~(~:a~)\"} ]}" type prop term ret))))           
+;; query1 allows a very specific format of request. It is also not used again.
 
 
 (defun extract-to-jplayer-json-from-title (title) ;; trying to get the right data in
