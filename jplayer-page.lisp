@@ -44,8 +44,26 @@
                   (:h1 (str name))
 		  (:p (str (extract-to-jplayer-json-from-title-n name))))) ; OKAAAAAAY. So I needed to put str in there.
 
+(define-easy-handler (search-page :uri "/with-search") (playlist)
+  (default-page2 (:playlist playlist)
+    (:p "What would you like to search for?" (:br)
+	(:form :action "/search-result" :method "post" 
+	       (:input :type "text" :name "name" )
+	       (:br)
+	       (:input :type "submit" :value "Submit"))))) 
 
 
+
+(define-easy-handler (search-result :uri "/search-result") (name)
+    (with-html-output-to-string 
+	(*standard-ouput* nil :prologue t :indent t)
+ (:html :lang "en"
+           (:head)
+	    (:meta :charset "utf-8")
+	    (:body
+	     (:p 
+	      (str (cdr (tree-assoc :row (search-all-fields name)))))))))
+	     
 
 (define-easy-handler (test-that :uri "/test-that") (playlist)
   (default-page2 (:playlist playlist)
