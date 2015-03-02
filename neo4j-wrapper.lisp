@@ -33,6 +33,15 @@
 			:content-type *json* 
 			:content (format nil "{\"statements\" : [ {\"statement\" : \"~a\"} ]}" body))))  
 
+(defun search-all-fields (term)
+  (let 
+    ((artist (cypher-query (format nil "MATCH (a:Artist) WHERE a.name='~a' RETURN a.name;" term)))
+     (playlist (cypher-query (format nil "MATCH (p:Playlist) WHERE p.title='~a' return p.title;" term))) 
+     (song (cypher-query (format nil "MATCH (s:Song) WHERE s.title='~a' return s.title;" term))))
+  (list artist playlist song))) ; This is not an acceptable way to return from this function but I don't have a better one at the moment.				
+;(mapcar (extract-data-rows '(artist playlist song)))))	      
+
+
 
 (defun get-playlist-by-title (title)
   (cypher-query (format nil "match (s:Song)-[:IN]->(p:Playlist {title:'~a'}) return s.title, s.artist, s.mp3, s.oga, s.poster;" title)))
@@ -44,3 +53,9 @@
 (defun get-song-by-title-artist (title artist)
   "Be careful with this one as it assumes Noun Case for both artist and title."
   (cypher-query (format nil "MATCH (s:Song {title:'~a', artist:'~a'}) return s.title, s.artist, s.mp3, s.oga, s.poster;" title artist)))
+
+(defun tree-assoc (key tree)
+  (when (consp tree)
+    (destructuring-bind (x . y)  tree
+      (if (eql x key) tree
+        (or (tree-assoc key x) (tree-assoc key y)))))) ; stole this from Stack Exchange.
