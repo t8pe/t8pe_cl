@@ -48,12 +48,16 @@
   (default-page2 (:playlist playlist)
     (:p "What would you like to search for?" (:br)
 	(:form :action "/search-result" :method "post" 
-	       (:input :type "text" :name "name" )
+	       (:input :type "text" :name "name")
+	       (:input :type "hidden" :name "playlist" :value playlist)
 	       (:br)
 	       (:input :type "submit" :value "Submit"))))) 
 
-
-
+(define-easy-handler (search-result :uri "/search-result") (playlist name)
+  (default-page2 (:playlist playlist)
+    (:p
+     (str (search-all-fields name)))))
+    
 (define-easy-handler (search-result :uri "/search-result") (name)
     (with-html-output-to-string 
 	(*standard-ouput* nil :prologue t :indent t)
@@ -61,9 +65,15 @@
            (:head)
 	    (:meta :charset "utf-8")
 	    (:body
-	     (:p 
-	      (str (cdr (tree-assoc :row (search-all-fields name)))))))))
-	     
+	     (:p
+	      (str (search-all-fields name)))))))
+
+
+(defun tree-assoc (key tree)
+  (when (consp tree)
+    (destructuring-bind (x . y)  tree
+      (if (eql x key) tree
+        (or (tree-assoc key x) (tree-assoc key y))))))
 
 (define-easy-handler (test-that :uri "/test-that") (playlist)
   (default-page2 (:playlist playlist)

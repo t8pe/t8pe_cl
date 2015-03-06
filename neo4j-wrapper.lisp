@@ -2,6 +2,8 @@
 (ql:quickload :drakma)                                
 (ql:quickload :babel)                                 
 (ql:quickload :cl-json)
+(ql:quickload :cl-who)
+(ql:quickload :parenscript)
                                
 ;; Should probably put those (require) things in there.                               
 
@@ -44,3 +46,14 @@
 (defun get-song-by-title-artist (title artist)
   "Be careful with this one as it assumes Noun Case for both artist and title."
   (cypher-query (format nil "MATCH (s:Song {title:'~a', artist:'~a'}) return s.title, s.artist, s.mp3, s.oga, s.poster;" title artist)))
+
+(defun search-all-fields (term)
+  (let 
+    ((artist (cypher-query (format nil "MATCH (a:Artist) WHERE a.name='~a' RETURN a.name;" term)))
+     (playlist (cypher-query (format nil "MATCH (p:Playlist) WHERE p.title='~a' return p.title;" term))) 
+     (song (cypher-query (format nil "MATCH (s:Song) WHERE s.title='~a' return s.title;" term))))
+    (cond ((tree-assoc :row artist) (concatenate 'string "Found artist: " (cadr (tree-assoc :row artist))))
+	   ((tree-assoc :row playlist) (concatenate 'string "Found playlist: " (cadr (tree-assoc :row playlist))))
+	    ((tree-assoc :row song) (concatenate 'string "Found song: " (cadr (tree-assoc :row song)))))))
+
+   
