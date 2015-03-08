@@ -1,23 +1,21 @@
-# t8pe #
+# t8pe 
 
 So far t8pe is a minimal web app. It doesn't yet handle most of the fancy stuff like adding playlists, user management... we're getting there. 
+**  t8pe/lisp serves files, makes player, takes care of money, record
+keeping. Everything else is in BuddyPress. **
 
-**t8pe todo**
+##t8pe todo
 
-- give Alt a github access
-- NEO - create Users (username)
 - login system
 - a way to use search results
 - build-playlist page
 - catch exceptions properly in json-for-jplayer.lisp
 - write 404 pages
 - unfuck my git setup
-- t8pe/lisp serves files, makes player, takes care of money, record
-keeping
 - iframes
 
-** DATA MODEL: **
-Song:
+## DATA MODEL: 
+###Song:
 - Copyright owner
 - songwriter
 - [:BY] -> Artist
@@ -26,44 +24,43 @@ Song:
 - lyrics
 - more info / writeups (link)
 
-Playlist: 
+###Playlist: 
 - Title
 - [:OWNED_BY] -> User/Artist
 - more info / writeups (link)
 
-Artist: UNIQUE
+###Artist: UNIQUE
 - name
 - plays information (aggregate)
 - payment stuff?
 - BuddyPress Foreign Key
 - more info / writeups (link)
 
-User: UNIQUE
+###User: UNIQUE
 - Username
 - BuddyPress Foreign Key
 
-** FURTHER THOUGHTS ** 
-Trouble:
+##FURTHER THOUGHTS 
+###Trouble:
 - collaboration (percentages?)
 - multiple artists
 - remixes
 - non-unique names -> politics of choosing the correct name? Help with
 claiming names?
 
-Blog-level customizability:
+###Blog-level customizability:
 - visual (CSS)
 - favicon
 
-Curation:
+###Curation:
 - artist-controlled curation split
 
-API:
+###API:
 - whaaaaaa?
 
-** BUDDYPRESS MODEL: **
+## BUDDYPRESS MODEL:
 
-
-** PAYMENT STUFF: **
+##PAYMENT STUFF:
 - does payment happen through BP or through NEO?
 
 
