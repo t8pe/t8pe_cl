@@ -6,8 +6,9 @@ keeping. Everything else is in BuddyPress. **
 
 ##t8pe todo
 
+- jplayer javascript -> create playlists etc (JS in separate file)
+- a way to use search results (by JS bits)
 - login system
-- a way to use search results
 - build-playlist page
 - catch exceptions properly in json-for-jplayer.lisp
 - write 404 pages
@@ -16,6 +17,9 @@ keeping. Everything else is in BuddyPress. **
 
 ## DATA MODEL: 
 ###Song:
+(s:Song {Copyright:"text", Songwriter:"text", Plays:"integer",
+Lyrics:"text", Link:"link"}) -[:BY]->Artist -[:IN]->Playlist
+
 - Copyright owner
 - songwriter
 - [:BY] -> Artist
@@ -24,7 +28,9 @@ keeping. Everything else is in BuddyPress. **
 - lyrics
 - more info / writeups (link)
 
-###Playlist: 
+###Playlist:
+(p:Playlist {Title:"text", Info:"link"}) -[:OWNED_BY]->Artist/User
+
 - Title
 - [:OWNED_BY] -> User/Artist
 - more info / writeups (link)

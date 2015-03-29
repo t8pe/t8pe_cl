@@ -52,8 +52,8 @@
     ((artist (cypher-query (format nil "MATCH (a:Artist) WHERE a.name='~a' RETURN a.name;" term)))
      (playlist (cypher-query (format nil "MATCH (p:Playlist) WHERE p.title='~a' return p.title;" term))) 
      (song (cypher-query (format nil "MATCH (s:Song) WHERE s.title='~a' return s.title;" term))))
-    (cond ((tree-assoc :row artist) (concatenate 'string "Found artist: " (cadr (tree-assoc :row artist))))
-	   ((tree-assoc :row playlist) (concatenate 'string "Found playlist: " (cadr (tree-assoc :row playlist))))
-	    ((tree-assoc :row song) (concatenate 'string "Found song: " (cadr (tree-assoc :row song)))))))
+    (cond ((tree-assoc :row artist) (concatenate 'string "Found artist: " (cadr (tree-assoc :row artist)) " Show all songs by artist?"))
+	   ((tree-assoc :row playlist) (concatenate 'string "Found playlist: " (cadr (tree-assoc :row playlist)) " Play list?"))
+	    ((tree-assoc :row song) (concatenate 'string "Found song: " (cadr (tree-assoc :row song)) " Add to playlist?")))))
 
-   
+ 

@@ -57,7 +57,9 @@
   (default-page2 (:playlist playlist)
     (:p
      (str (search-all-fields name)))))
-    
+     ;(:a :href (search-all-fields name) " Add to playlist?"))))
+
+
 (define-easy-handler (search-result :uri "/search-result") (name)
     (with-html-output-to-string 
 	(*standard-ouput* nil :prologue t :indent t)
