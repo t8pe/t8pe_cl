@@ -62,7 +62,11 @@ claiming names?
 - artist-controlled curation split
 
 ###API:
-- whaaaaaa?
+- the interface should just be the same as what the jplayer builds on:
+  HTTP requests and responses for things like getting
+  artist/playlist/etc and being served the URL of the file
+- how do we prevent that from just handing out the actual file? This I
+  don't know enough about.
 
 ## BUDDYPRESS MODEL:
 

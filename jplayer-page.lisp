@@ -1,11 +1,11 @@
 ;; This is where I'm going to put the code for displaying the actual jplayer stuff.
-(defpackage :t8pe-jplayer
-  (:use :cl :cl-user :hunchentoot :cl-who :parenscript))
-
-(in-package :t8pe-jplayer)
-
 (dolist (x '(:hunchentoot :cl-who :parenscript))      
   (ql:quickload x)) ;; Would you look at that? A lispy way to load libraries! I love it.
+
+(defpackage :t8pe-jplayer
+  (:use :cl :cl-user :hunchentoot :cl-who :parenscript)) ;; surely this is backwards? Don't we defpackage and then quickload?
+
+(in-package :t8pe-jplayer)
 
 
 (defmacro default-page ((&key title script) &body body)
